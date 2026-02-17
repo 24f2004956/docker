@@ -1,26 +1,22 @@
-name: Docker Image CI
+name: Docker Publish
 
 on:
   push:
-    branches: ["main"]
-  workflow_dispatch:
+    branches: [ "master", "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: hr1244/q-docker-hub-image:latest
+    - uses: actions/checkout@v3
+    - name: Docker Login
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build and Push
+      run: |
+        docker build . -t hr1244/portfolio:24f2004956
+        docker push hr1244/portfolio:24f2004956
+        docker tag hr1244/portfolio:24f2004956 hr1244/portfolio:latest
+        docker push hr1244/portfolio:latest
